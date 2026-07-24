@@ -1,0 +1,105 @@
+name: Normalize localized README
+
+on:
+  push:
+    branches:
+      - docs/zh-cn-readme
+    paths:
+      - .github/workflows/normalize-readme-localization.yml
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: docs/zh-cn-readme
+
+      - name: Restore original headings and link labels
+        shell: python
+        run: |
+          import re
+          import subprocess
+          from pathlib import Path
+
+          original = subprocess.check_output(
+              ["git", "show", "origin/master:README.md"],
+              text=True,
+              encoding="utf-8",
+          )
+          target_path = Path("README.md")
+          translated = target_path.read_text(encoding="utf-8")
+
+          heading_re = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)
+          link_re = re.compile(r"(?<!!)\[([^\]\n]+)\]\(([^)\n]+)\)")
+
+          original_headings = list(heading_re.finditer(original))
+          translated_headings = list(heading_re.finditer(translated))
+          if len(original_headings) != len(translated_headings):
+              raise SystemExit(
+                  f"Heading count mismatch: original={len(original_headings)}, "
+                  f"translated={len(translated_headings)}"
+              )
+
+          heading_iter = iter(m.group(0) for m in original_headings)
+          normalized = heading_re.sub(lambda _: next(heading_iter), translated)
+
+          original_links = list(link_re.finditer(original))
+          translated_links = list(link_re.finditer(normalized))
+          original_urls = [m.group(2) for m in original_links]
+          translated_urls = [m.group(2) for m in translated_links]
+          if original_urls != translated_urls:
+              mismatch = next(
+                  (
+                      i
+                      for i, (left, right) in enumerate(
+                          zip(original_urls, translated_urls), start=1
+                      )
+                      if left != right
+                  ),
+                  min(len(original_urls), len(translated_urls)) + 1,
+              )
+              left = original_urls[mismatch - 1] if mismatch <= len(original_urls) else "<missing>"
+              right = translated_urls[mismatch - 1] if mismatch <= len(translated_urls) else "<missing>"
+              raise SystemExit(
+                  "Markdown link URL sequence mismatch at position "
+                  f"{mismatch}: original={left!r}, translated={right!r}; "
+                  f"counts {len(original_urls)} vs {len(translated_urls)}"
+              )
+
+          original_link_iter = iter(original_links)
+          normalized = link_re.sub(
+              lambda current: (
+                  "[" + next(original_link_iter).group(1) + "](" + current.group(2) + ")"
+              ),
+              normalized,
+          )
+
+          if [m.group(2) for m in link_re.finditer(normalized)] != original_urls:
+              raise SystemExit("URL validation failed after normalization")
+          if [m.group(0) for m in heading_re.finditer(normalized)] != [
+              m.group(0) for m in original_headings
+          ]:
+              raise SystemExit("Heading validation failed after normalization")
+
+          target_path.write_text(normalized, encoding="utf-8")
+          print(
+              f"Validated {len(original_headings)} headings and "
+              f"{len(original_links)} Markdown links."
+          )
+
+      - name: Commit normalized README
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "README already normalized"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: preserve README headings and link labels"
+          git push origin HEAD:docs/zh-cn-readme
