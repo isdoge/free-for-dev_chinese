@@ -1,238 +1,49 @@
-# trigger-2
-name: Apply localized README layout
+name: Fix PR 4 URL preservation
 
 on:
-  push:
-    branches:
-      - docs/zh-readme-layout
-    paths:
-      - .github/workflows/apply-zh-readme-layout.yml
+  pull_request_target:
+    types: [synchronize]
 
 permissions:
   contents: write
 
 jobs:
-  update-readme:
+  fix-pr4-urls:
+    if: github.event.pull_request.number == 4 && github.event.pull_request.head.ref == 'docs/zh-readme-layout-v2'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: docs/zh-readme-layout
+          ref: docs/zh-readme-layout-v2
           fetch-depth: 0
 
-      - name: Add notice, localize headings, and collapse sections
+      - name: Restore service URLs to master spelling
         shell: python
         run: |
           from pathlib import Path
-          import re
 
           path = Path("README.md")
           text = path.read_text(encoding="utf-8")
-
-          marker = "<!-- zh-localization-note -->"
-          if marker in text:
-              raise SystemExit("README localization layout was already applied")
-
-          title_old = "# free-for.dev\n"
-          if title_old not in text:
-              raise SystemExit("Expected README title not found")
-
-          notice = '''# free-for.dev 中文汉化版
-
-<!-- zh-localization-note -->
-> [!IMPORTANT]
-> ### AI 辅助汉化与版本说明
-> 本仓库是上游 [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) 的中文汉化维护版，**仅同步并汉化上游 README**。
->
-> - **AI 辅助汉化**：README 中文说明由 AI 辅助翻译与校对；服务条目的服务名、产品名、项目名、Markdown 链接文字和 URL 保持上游原文。
-> - **贡献请提交到上游**：如需新增服务、删除服务，或调整免费额度、链接、服务说明等内容，请前往上游 [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) 提交 Pull Request。待上游合并后，本仓库会在后续同步中跟进并汉化；本仓库主要处理中文翻译、上游同步和排版问题。
-> - **展示样式有调整**：为改善超长列表一次性展开造成的浏览体验，本汉化版对 README 展示结构做了调整，包括汉化目录与分类标题，并使用 GitHub 原生 `<details>` / `<summary>` 将各分类列表默认折叠。上游原有英文锚点继续保留，服务内容本身不因样式调整而改变。
-> - **以官网与上游为准**：AI 翻译可能存在术语或语义偏差，服务免费额度也可能随时变化；如有差异，以服务官网及上游最新内容为准。
-
-'''
-          text = text.replace(title_old, notice, 1)
-
-          section_zh = {
-              "Major Cloud Providers": "主要云服务商",
-              "Cloud Management Solutions": "云管理解决方案",
-              "Cloud management solutions": "云管理解决方案",
-              "Analytics, Events, and Statistics": "分析、事件与统计",
-              "APIs, Data and ML": "API、数据与机器学习",
-              "APIs, Data, and ML": "API、数据与机器学习",
-              "Artifact Repos": "制品仓库",
-              "BaaS": "BaaS（后端即服务）",
-              "Low-code Platform": "低代码平台",
-              "CDN and Protection": "CDN 与防护",
-              "CI and CD": "CI / CD",
-              "CMS": "CMS（内容管理系统）",
-              "Code Generation": "代码生成",
-              "Code Quality": "代码质量",
-              "Code Search and Browsing": "代码搜索与浏览",
-              "Crash and Exception Handling": "崩溃与异常处理",
-              "Data Visualization on Maps": "地图数据可视化",
-              "Managed Data Services": "托管数据服务",
-              "Design and UI": "设计与 UI",
-              "Dev Blogging Sites": "开发者博客平台",
-              "DNS": "DNS",
-              "Docker Related": "Docker 相关",
-              "Domain": "域名",
-              "Education and Career Development": "教育与职业发展",
-              "Email": "邮件",
-              "Feature Toggles Management Platforms": "功能开关管理平台",
-              "Font": "字体",
-              "Forms": "表单",
-              "Generative AI": "生成式 AI",
-              "IaaS": "IaaS（基础设施即服务）",
-              "IDE and Code Editing": "IDE 与代码编辑",
-              "International Mobile Number Verification API and SDK": "国际手机号码验证 API 与 SDK",
-              "Issue Tracking and Project Management": "问题跟踪与项目管理",
-              "Log Management": "日志管理",
-              "Mobile App Distribution and Feedback": "移动应用分发与反馈",
-              "Management Systems": "管理系统",
-              "Messaging and Streaming": "消息与流处理",
-              "Miscellaneous": "其他",
-              "Monitoring": "监控",
-              "PaaS": "PaaS（平台即服务）",
-              "Package Build System": "软件包构建系统",
-              "Payment and Billing Integration": "支付与计费集成",
-              "Privacy Management": "隐私管理",
-              "Screenshot APIs": "截图 API",
-              "Flutter Related and Building IOS Apps without Mac": "Flutter 相关及无 Mac 构建 iOS 应用",
-              "Search": "搜索",
-              "Security and PKI": "安全与 PKI",
-              "Authentication, Authorization, and User Management": "身份认证、授权与用户管理",
-              "Source Code Repos": "源代码仓库",
-              "Storage and Media Processing": "存储与媒体处理",
-              "Tunneling, WebRTC, Web Socket Servers and Other Routers": "隧道、WebRTC、WebSocket 服务器与其他路由",
-              "Testing": "测试",
-              "Tools for Teams and Collaboration": "团队与协作工具",
-              "Translation Management": "翻译管理",
-              "Visitor Session Recording": "访客会话录制",
-              "Web Hosting": "Web 托管",
-              "Commenting Platforms": "评论平台",
-              "Remote Desktop Tools": "远程桌面工具",
-              "Other Free Resources": "其他免费资源",
+          replacements = {
+              "[pyup.io](https://pyup.io/)": "[pyup.io](https://pyup.io)",
+              "[OnlineOrNot.com](https://onlineornot.com)": "[OnlineOrNot.com](https://onlineornot.com/)",
+              "[exceptionless](https://exceptionless.com/)": "[exceptionless](https://exceptionless.com)",
+              "[Hygger](https://hygger.io/)": "[Hygger](https://hygger.io)",
+              "[Pulse.red](https://pulse.red/)": "[Pulse.red](https://pulse.red)",
+              "[codiga.io](https://www.codiga.io)": "[codiga.io](https://codiga.io/)",
           }
-
-          toc_anchor_zh = {
-              "major-cloud-providers": "主要云服务商永久免费额度",
-              "cloud-management-solutions": "云管理解决方案",
-              "analytics-events-and-statistics": "分析、事件与统计",
-              "apis-data-and-ml": "API、数据与机器学习",
-              "artifact-repos": "制品仓库",
-              "baas": "BaaS（后端即服务）",
-              "low-code-platform": "低代码平台",
-              "cdn-and-protection": "CDN 与防护",
-              "ci-and-cd": "CI / CD",
-              "cms": "CMS（内容管理系统）",
-              "code-generation": "代码生成",
-              "code-quality": "代码质量",
-              "code-search-and-browsing": "代码搜索与浏览",
-              "crash-and-exception-handling": "崩溃与异常处理",
-              "data-visualization-on-maps": "地图数据可视化",
-              "managed-data-services": "托管数据服务",
-              "design-and-ui": "设计与 UI",
-              "dev-blogging-sites": "开发者博客平台",
-              "dns": "DNS",
-              "docker-related": "Docker 相关",
-              "domain": "域名",
-              "education-and-career-development": "教育与职业发展",
-              "email": "邮件",
-              "feature-toggles-management-platforms": "功能开关管理平台",
-              "font": "字体",
-              "forms": "表单",
-              "generative-ai": "生成式 AI",
-              "iaas": "IaaS（基础设施即服务）",
-              "ide-and-code-editing": "IDE 与代码编辑",
-              "international-mobile-number-verification-api-and-sdk": "国际手机号码验证 API 与 SDK",
-              "issue-tracking-and-project-management": "问题跟踪与项目管理",
-              "log-management": "日志管理",
-              "mobile-app-distribution-and-feedback": "移动应用分发与反馈",
-              "management-systems": "管理系统",
-              "messaging-and-streaming": "消息与流处理",
-              "miscellaneous": "其他",
-              "monitoring": "监控",
-              "paas": "PaaS（平台即服务）",
-              "package-build-system": "软件包构建系统",
-              "payment-and-billing-integration": "支付与计费集成",
-              "privacy-management": "隐私管理",
-              "screenshot-apis": "截图 API",
-              "flutter-related-and-building-ios-apps-without-mac": "Flutter 相关及无 Mac 构建 iOS 应用",
-              "search": "搜索",
-              "security-and-pki": "安全与 PKI",
-              "authentication-authorization-and-user-management": "身份认证、授权与用户管理",
-              "source-code-repos": "源代码仓库",
-              "storage-and-media-processing": "存储与媒体处理",
-              "tunneling-webrtc-web-socket-servers-and-other-routers": "隧道、WebRTC、WebSocket 服务器与其他路由",
-              "testing": "测试",
-              "tools-for-teams-and-collaboration": "团队与协作工具",
-              "translation-management": "翻译管理",
-              "visitor-session-recording": "访客会话录制",
-              "web-hosting": "Web 托管",
-              "commenting-platforms": "评论平台",
-              "remote-desktop-tools": "远程桌面工具",
-              "other-free-resources": "其他免费资源",
-          }
-
-          def github_slug(s: str) -> str:
-              s = s.lower().strip()
-              s = re.sub(r"[^\w\- ]", "", s, flags=re.UNICODE)
-              return re.sub(r"\s+", "-", s)
-
-          if "# Table of Contents" not in text:
-              raise SystemExit("Table of Contents heading not found")
-          text = text.replace("# Table of Contents", '<a name="table-of-contents"></a>\n# 目录', 1)
-
-          toc_pattern = re.compile(r"(?m)^(\s*\* )\[([^\]]+)\]\(#([^)]+)\)$")
-          def replace_toc(m):
-              anchor = m.group(3)
-              zh = toc_anchor_zh.get(anchor)
-              return f"{m.group(1)}[{zh}](#{anchor})" if zh else m.group(0)
-          text = toc_pattern.sub(replace_toc, text)
-          text = text.replace("**[⬆️ Back to Top](#table-of-contents)**", "**[⬆️ 返回顶部](#table-of-contents)**")
-
-          parts = re.split(r"(?m)^## (.+?)\s*$", text)
-          if len(parts) < 3:
-              raise SystemExit("No H2 sections found")
-
-          rebuilt = [parts[0]]
-          seen = []
-          for i in range(1, len(parts), 2):
-              heading = parts[i].strip()
-              body = parts[i + 1]
-              if heading not in section_zh:
-                  raise SystemExit(f"Unmapped H2 section: {heading!r}")
-              zh = section_zh[heading]
-              anchor = github_slug(heading)
-              seen.append((heading, zh, anchor))
-              rebuilt.append(
-                  f'<a name="{anchor}"></a>\n'
-                  f'<details>\n'
-                  f'<summary><strong>{zh}</strong></summary>\n\n'
-                  f'## {zh}\n\n'
-                  f'{body.strip()}\n\n'
-                  f'</details>\n\n'
-              )
-
-          text = "".join(rebuilt).rstrip() + "\n"
-
-          if len(seen) < 50:
-              raise SystemExit(f"Unexpectedly few sections wrapped: {len(seen)}")
-          if text.count("<details>") != len(seen) or text.count("</details>") != len(seen):
-              raise SystemExit("details tag count mismatch")
-          if '<a name="table-of-contents"></a>' not in text:
-              raise SystemExit("table-of-contents compatibility anchor missing")
-          if "# free-for.dev 中文汉化版" not in text:
-              raise SystemExit("localized title missing")
-
+          for old, new in replacements.items():
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"expected exactly one occurrence of {old!r}, got {count}")
+              text = text.replace(old, new, 1)
           path.write_text(text, encoding="utf-8")
-          print(f"Localized and collapsed {len(seen)} sections")
 
-      - name: Commit README and remove temporary workflow
+      - name: Commit URL-only correction and remove trigger
         run: |
-          rm .github/workflows/apply-zh-readme-layout.yml
+          rm -f .github/pr4-url-fix-trigger.txt
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md .github/workflows/apply-zh-readme-layout.yml
-          git commit -m "docs: add localization notice and collapsible sections"
-          git push
+          git add README.md .github/pr4-url-fix-trigger.txt
+          git commit -m "docs: preserve upstream service URLs"
+          git push origin HEAD:docs/zh-readme-layout-v2
