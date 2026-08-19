@@ -1,0 +1,189 @@
+name: Temporary README layout bootstrap
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  apply-readme-layout:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'docs/zh-readme-layout-v2'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Merge latest master into repair branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin master
+          git merge --no-edit origin/master
+
+      - name: Add Chinese presentation and collapsible sections
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path("README.md")
+          text = path.read_text(encoding="utf-8")
+
+          marker = "<!-- zh-localization-note -->"
+          if marker in text:
+              print("README presentation already applied")
+              raise SystemExit(0)
+
+          if not text.startswith("# free-for.dev\n"):
+              raise SystemExit("Unexpected README title")
+
+          notice = '''# free-for.dev 中文汉化版
+
+<!-- zh-localization-note -->
+> [!IMPORTANT]
+> ### 🤖 AI 辅助汉化与版本说明
+> 本仓库是上游 [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) 的中文汉化维护版，**仅同步并汉化上游 README，同时针对中文阅读体验调整展示样式**。
+>
+> - **AI 辅助汉化**：README 中文内容由 AI 辅助翻译与校对。服务名、产品名、项目名、Markdown 链接文字及 URL 原则上保持上游原文；目录和分类标题会进行中文化展示。
+> - **贡献请提交到上游**：如需新增服务、删除服务，或修改免费额度、链接、服务说明等条目内容，请前往上游 [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) 提交 Pull Request。待上游合并后，本仓库会在后续同步中跟进并汉化。本仓库主要处理中文翻译、上游同步及中文排版问题。
+> - **展示样式有调整**：为改善超长列表默认全部展开时的浏览体验，本汉化版汉化了目录与分类标题，并使用 GitHub 原生 `<details>` / `<summary>` 将各分类的服务列表默认折叠；原上游英文锚点继续保留，旧目录链接仍可使用。折叠仅改变页面展示，不会减少 README 文件本身的大小或改变服务条目内容。
+> - **内容准确性**：AI 翻译可能存在术语或语义偏差，服务免费额度也可能随时变化；如有差异，以服务官网及上游最新 README 为准。
+
+'''
+          text = notice + text[len("# free-for.dev\n"):]
+
+          toc_zh = {
+              "major-cloud-providers": "主要云服务商永久免费额度",
+              "cloud-management-solutions": "云管理解决方案",
+              "analytics-events-and-statistics": "分析、事件与统计",
+              "apis-data-and-ml": "API、数据与机器学习",
+              "artifact-repos": "制品仓库",
+              "baas": "BaaS（后端即服务）",
+              "low-code-platform": "低代码平台",
+              "cdn-and-protection": "CDN 与防护",
+              "ci-and-cd": "CI / CD",
+              "cms": "CMS（内容管理系统）",
+              "code-generation": "代码生成",
+              "code-quality": "代码质量",
+              "code-search-and-browsing": "代码搜索与浏览",
+              "crash-and-exception-handling": "崩溃与异常处理",
+              "data-visualization-on-maps": "地图数据可视化",
+              "managed-data-services": "托管数据服务",
+              "design-and-ui": "设计与 UI",
+              "dev-blogging-sites": "开发者博客平台",
+              "dns": "DNS",
+              "docker-related": "Docker 相关",
+              "domain": "域名",
+              "education-and-career-development": "教育与职业发展",
+              "email": "邮件",
+              "feature-toggles-management-platforms": "功能开关管理平台",
+              "font": "字体",
+              "forms": "表单",
+              "generative-ai": "生成式 AI",
+              "iaas": "IaaS（基础设施即服务）",
+              "ide-and-code-editing": "IDE 与代码编辑",
+              "international-mobile-number-verification-api-and-sdk": "国际手机号码验证 API 与 SDK",
+              "issue-tracking-and-project-management": "问题跟踪与项目管理",
+              "log-management": "日志管理",
+              "mobile-app-distribution-and-feedback": "移动应用分发与反馈",
+              "management-system": "管理系统",
+              "messaging-and-streaming": "消息与流处理",
+              "miscellaneous": "其他",
+              "monitoring": "监控",
+              "paas": "PaaS（平台即服务）",
+              "package-build-system": "软件包构建系统",
+              "payment-and-billing-integration": "支付与计费集成",
+              "privacy-management": "隐私管理",
+              "screenshot-apis": "截图 API",
+              "flutter-related-and-building-ios-apps-without-mac": "Flutter 相关及无 Mac 构建 iOS 应用",
+              "search": "搜索",
+              "security-and-pki": "安全与 PKI",
+              "authentication-authorization-and-user-management": "身份认证、授权与用户管理",
+              "source-code-repos": "源代码仓库",
+              "storage-and-media-processing": "存储与媒体处理",
+              "tunneling-webrtc-web-socket-servers-and-other-routers": "隧道、WebRTC、WebSocket 服务器与其他路由",
+              "testing": "测试",
+              "tools-for-teams-and-collaboration": "团队与协作工具",
+              "translation-management": "翻译管理",
+              "visitor-session-recording": "访客会话录制",
+              "web-hosting": "Web 托管",
+              "commenting-platforms": "评论平台",
+              "remote-desktop-tools": "远程桌面工具",
+              "other-free-resources": "其他免费资源",
+          }
+
+          heading_zh = dict(toc_zh)
+          heading_zh["major-cloud-providers"] = "主要云服务商"
+
+          toc_match = re.search(r"(?ms)^# Table of Contents\s*\n(?P<body>.*?)(?=^## )", text)
+          if not toc_match:
+              raise SystemExit("Table of Contents block not found")
+
+          toc_body = toc_match.group("body")
+          toc_pattern = re.compile(r"(?m)^(\s*\* )\[([^\]]+)\]\(#([^)]+)\)$")
+          anchors = [m.group(3) for m in toc_pattern.finditer(toc_body)]
+          if len(anchors) < 50:
+              raise SystemExit(f"Unexpected TOC size: {len(anchors)}")
+
+          unknown = [a for a in anchors if a not in toc_zh]
+          if unknown:
+              raise SystemExit(f"Unmapped TOC anchors: {unknown}")
+
+          def replace_toc(m):
+              anchor = m.group(3)
+              return f"{m.group(1)}[{toc_zh[anchor]}](#{anchor})"
+
+          localized_toc = toc_pattern.sub(replace_toc, toc_body)
+          text = text[:toc_match.start()] + '<a name="table-of-contents"></a>\n# 目录\n' + localized_toc + text[toc_match.end():]
+          text = text.replace("**[⬆️ Back to Top](#table-of-contents)**", "**[⬆️ 返回顶部](#table-of-contents)**")
+
+          parts = re.split(r"(?m)^## (.+?)\s*$", text)
+          section_count = (len(parts) - 1) // 2
+          if section_count != len(anchors):
+              raise SystemExit(f"Section/TOC mismatch: {section_count} sections vs {len(anchors)} TOC entries")
+
+          out = [parts[0]]
+          for idx in range(section_count):
+              original_heading = parts[idx * 2 + 1].strip()
+              body = parts[idx * 2 + 2].strip()
+              anchor = anchors[idx]
+              title = heading_zh[anchor]
+              out.append(
+                  f'<a name="{anchor}"></a>\n'
+                  f'## {title}\n\n'
+                  f'<details>\n'
+                  f'<summary><strong>📂 展开 / 收起列表</strong></summary>\n\n'
+                  f'{body}\n\n'
+                  f'</details>\n\n'
+              )
+              print(f"{original_heading} -> {title} [{anchor}]")
+
+          text = "".join(out).rstrip() + "\n"
+
+          if text.count("<details>") != section_count or text.count("</details>") != section_count:
+              raise SystemExit("details tag count mismatch")
+          if '<a name="table-of-contents"></a>' not in text:
+              raise SystemExit("table-of-contents compatibility anchor missing")
+          if "# free-for.dev 中文汉化版" not in text:
+              raise SystemExit("localized title missing")
+          if "<!-- zh-localization-note -->" not in text:
+              raise SystemExit("localization notice marker missing")
+
+          path.write_text(text, encoding="utf-8")
+          print(f"Localized and collapsed {section_count} sections")
+
+      - name: Remove bootstrap and commit result
+        run: |
+          rm -f .github/workflows/temporary-readme-layout-bootstrap.yml
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "docs: add AI notice and collapsible Chinese sections"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
