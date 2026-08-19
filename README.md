@@ -707,7 +707,7 @@
   * [Otterwatch](https://otterwatch.dev/) - 每日监控 SSL/TLS 证书，包括到期告警（提前 30/7/1 天）、证书链和 OCSP 吊销检查，以及证书透明度签发历史。5 个域名永久免费，无需信用卡。
   * [Protectumus](https://protectumus.com) - 免费网站安全检查、站点杀毒和 PHP 服务器防火墙（WAF），免费套餐注册用户可接收邮件通知。
   * [Public Cloud Threat Intelligence](https://cloudintel.himanshuanand.com/) - 针对公有云基础设施的高可信失陷指标（IOC）。部分内容可在 GitHub（https://github.com/unknownhad/AWSAttacks）获取，完整列表通过 API 提供。
-  * [pyup.io](https://pyup.io/) - 监控 Python 依赖安全漏洞并自动更新。1 个私有项目免费，开源项目不限。
+  * [pyup.io](https://pyup.io) - 监控 Python 依赖安全漏洞并自动更新。1 个私有项目免费，开源项目不限。
   * [qualys.com](https://www.qualys.com/community-edition) - 查找 Web 应用漏洞并审计 OWASP 风险。
   * [SikkerKey](https://sikkerkey.com) - 机器认证的 Secret 管理器，免费含 2 个项目、2 台已引导机器、20 个 Secret 和 7 天审计日志保留。
   * [Smart Grow Vault](https://vault.smart-grow.app/) - 安全的企业级环境变量和 Secret 管理平台，免费套餐每个项目最多 3 个应用和 150 个 Secret。
@@ -906,7 +906,7 @@
   * [MonitorMonk](https://monitormonk.com) - 极简可用性监控和美观状态页。永久免费方案可对 10 个网站或 API 端点进行 HTTPS、关键字、SSL 和响应时间监控，并提供 2 个仪表板/状态页。
   * [netdata.cloud](https://www.netdata.cloud/) - 收集实时指标的开源工具，持续开发中，也可在 GitHub 获取。
   * [newrelic.com](https://www.newrelic.com) - 帮助工程师构建更完善软件的可观测性平台，可检测从单体到无服务器的所有组件，并分析、排障和优化整个技术栈。免费套餐每月含 100GB 数据写入、1 名完整访问用户和无限基础用户。
-  * [OnlineOrNot.com](https://onlineornot.com) - 为网站和 API 提供可用性监控，为 Cron Job 与计划任务提供监控，并提供状态页。前 5 个检查以 3 分钟间隔免费，免费套餐通过 Slack、Discord 和邮件发送告警。
+  * [OnlineOrNot.com](https://onlineornot.com/) - 为网站和 API 提供可用性监控，为 Cron Job 与计划任务提供监控，并提供状态页。前 5 个检查以 3 分钟间隔免费，免费套餐通过 Slack、Discord 和邮件发送告警。
   * [OntarioNet.ca CN Test](https://cntest.ontarionet.ca) - 检查网站是否被中国防火长城屏蔽，通过比较中国服务器与美国服务器检测的 DNS 结果和 ASN 信息识别 DNS 污染。
   * [pagecrawl.io](https://pagecrawl.io/) - 监控网站变化，最多 6 个监控项免费，每天检查。
   * [pagertree.com](https://pagertree.com/) - 简单的告警和值班管理界面，最多 5 名用户免费。
@@ -950,7 +950,7 @@
   * [CatchJS.com](https://catchjs.com/) - 带截图和点击轨迹的 JavaScript 错误跟踪，开源项目免费。
   * [elmah.io](https://elmah.io/) - 面向 Web 开发者的错误日志和可用性监控，为开源项目提供免费 Small Business 订阅。
   * [Embrace](https://embrace.io/) - 移动应用监控，小团队每年最多 100 万用户会话免费。
-  * [exceptionless](https://exceptionless.com/) - 实时错误、功能和日志报告等，每月 3,000 个事件、1 名用户免费；开源且易于自托管，自托管后不限使用。
+  * [exceptionless](https://exceptionless.com) - 实时错误、功能和日志报告等，每月 3,000 个事件、1 名用户免费；开源且易于自托管，自托管后不限使用。
   * [GlitchTip](https://glitchtip.com/) - 简单开源的错误跟踪，兼容开源 Sentry SDK，每月 1,000 个事件免费，也可自托管且不限量。
   * [honeybadger.io](https://www.honeybadger.io) - 异常、可用性和 Cron 监控，小团队和开源项目免费（每月 12,000 个错误）。
   * [Jam](https://jam.dev) - 一键创建开发者友好的缺陷报告，免费方案可创建无限 Jam。
@@ -1512,7 +1512,7 @@
   * [GraphQL Inspector](https://github.com/marketplace/graphql-inspector) - 输出两个 GraphQL Schema 之间的变更列表，精确解释每项差异并标记为破坏性、非破坏性或危险。
   * [Helploom](https://helploom.com) - 客户支持软件，永久免费方案提供实时聊天。简单、轻量、美观，只需复制粘贴脚本即可配置，由开发者独立构建。
   * [HeyRetro](https://heyretro.io/) - 实时 Sprint 回顾平台，支持投票、计时器、调查、访客协作和破冰游戏。永久免费方案每月 1 个看板、匿名调查和访客链接分享。
-  * [Hygger](https://hygger.io/) - 项目管理平台，免费方案用户、项目和看板不限，含 100MB 存储。
+  * [Hygger](https://hygger.io) - 项目管理平台，免费方案用户、项目和看板不限，含 100MB 存储。
   * [Ilograph](https://www.ilograph.com/) - 交互式图表，可从多个视角和详细层级查看基础设施，图表可用代码表示。免费套餐可创建无限私有图，最多 3 名查看者。
   * [Jira](https://www.atlassian.com/software/jira) - 广泛用于企业环境的高级软件开发项目管理工具，最多 10 名用户免费。
   * [kan.bn](https://kan.bn/) - 强大灵活的看板应用，可在一处组织工作、跟踪进度并交付成果。免费方案限 1 名用户，但看板、列表和卡片不限。
@@ -1530,7 +1530,7 @@
   * [Plane](https://plane.so/) - 简单、可扩展、开源的项目和产品管理工具，成员不限，单文件上传最大 5MB，最多 1,000 个 Issue 免费。
   * [planitpoker.com](https://www.planitpoker.com/) - 免费在线 Planning Poker（估算工具）。
   * [point.poker](https://www.point.poker/) - 在线 Planning Poker（基于共识的估算工具），用户、团队、会话、轮次和投票不限，无需注册。
-  * [Pulse.red](https://pulse.red/) - 面向项目的免费极简时间跟踪和工时表应用。
+  * [Pulse.red](https://pulse.red) - 面向项目的免费极简时间跟踪和工时表应用。
   * [ScrumFast](https://www.scrumfast.com) - 界面直观的 Scrum 看板，最多 5 名用户免费。
   * [Sflow](https://sflow.io) - 面向敏捷软件开发、营销、销售和客户支持的项目管理工具，尤其适合外包和跨组织协作项目。免费方案最多 3 个项目和 5 名成员。
   * [Shake](https://www.shakebugs.com/) - 移动应用内缺陷报告和反馈工具，免费方案每个应用每月 10 份缺陷报告。
@@ -1725,7 +1725,7 @@
   * [cocalc.com](https://cocalc.com/) - 云端协作计算平台，可在浏览器中访问完整 Ubuntu，内置协作以及大量数学、科学和数据科学软件，包括 Python、LaTeX、Jupyter Notebooks、SageMath、scikit-learn 等。
   * [Code::Blocks](https://codeblocks.org) - 免费 Fortran 和 C/C++ IDE，开源并支持 Windows、macOS 和 Linux。
   * [Codeground](https://codeground.ai/) - 免费浏览器 IDE 和 Playground，支持 15 种以上语言以及 Postgres、MySQL、MongoDB、Redis，并提供可分享片段、编程面试和云工作区。免费 Playground 无需安装。
-  * [codiga.io](https://www.codiga.io) - 可直接在 IDE 中搜索、定义和复用代码片段的编程助手，个人和小型组织免费。
+  * [codiga.io](https://codiga.io/) - 可直接在 IDE 中搜索、定义和复用代码片段的编程助手，个人和小型组织免费。
   * [Components.studio](https://webcomponents.dev/) - 隔离编写组件、在 Story 中可视化、测试并发布到 npm。
   * [Eclipse Che](https://www.eclipse.org/che/) - 面向开发团队、基于 Web 且原生 Kubernetes 的多语言 IDE，开源并由社区驱动。Red Hat 托管的在线实例位于 [workspaces.openshift.com](https://workspaces.openshift.com/)。
   * [ForgeCode](https://forgecode.dev/) - 面向 Claude、GPT-4 系列、Grok、DeepSeek、Gemini 等前沿模型的 AI 结对编程工具，可原生运行于 CLI 并无缝集成任意 IDE。免费套餐提供基础 AI 模型访问和本地处理。
